@@ -15,7 +15,7 @@ class qidian_spider(object):
         self.js = "document.body.scrollTop=2100"
         self.content = {}
         self.url_list = deque([])
-        self.filter = ["订阅VIP章节", "阅读封仙最新章节", "返回书目"]
+        self.filter = ["订阅VIP章节",  "返回书目"]
 
     def start_spider(self):
         time_long=time.time()
