@@ -18,63 +18,62 @@ from io import BytesIO
 
 
 url = "http://www.heibanke.com/lesson/crawler_ex04/"
-url_head ="http://www.heibanke.com"
 url_login = "http://www.heibanke.com/accounts/login"
 
 
-cont = 0
-wrong = 0
 
-def check(passwrod):
-	captcha = browser.find_element_by_xpath("/html/body/div/div/div[2]/form/div[3]/img").get_attribute("src")
-	# urlretrieve(captcha, "captcha.png")
+class Fifth():
+	def __init__(self):
+		self.cont = 0
+		self.wrong = 0
 
-def start():
-	browser = webdriver.PhantomJS()
-	browser.quit()
-	data = {
-		"username": "test",
-		"password": "test123"
-	}
-	browser.get(url_login)
-	browser.find_element_by_id("id_username").send_keys(data["username"])
-	browser.find_element_by_id("id_password").send_keys(data["password"])
-	browser.find_element_by_id("id_submit").click()
-	time.sleep(1)
-	for i in range(31):
-		browser.get(url)
-		while True:
-			check(i)
-			browser.find_element_by_id("id_username").send_keys("ss")
-			browser.find_element_by_id("id_password").send_keys(str(i))
-			try:
-				img = Image.open(BytesIO(urlopen(captcha).read()))
-				print("captcha ({i}): ".format(i=i), image_to_string(img))
-			except:
-				browser.get(url)
-				print("image_to_string error")
-			cont+=1
-			try:
-				browser.find_element_by_id("id_captcha_1").send_keys(image_to_string(img))
-				browser.find_element_by_id("id_submit").click()
-				time.sleep(1)
-				WebDriverWait(browser, 10).until(lambda browser: browser.find_element_by_tag_name("h3").is_displayed())
-				if browser.find_element_by_tag_name("h3").text != "验证码输入错误":
-					print(i, browser.find_element_by_tag_name("h3").text)
-					wrong+=1
-					break
-				elif "ss" in browser.find_element_by_tag_name("h3").text:
-					print(i, "success!")
-					browser.quit()
-					return 0
-				print(i, browser.find_element_by_tag_name("h3").text)
-			except:
-				print("a error")
+	def check(self, passwrod):
+		self.captcha = self.browser.find_element_by_xpath("/html/body/div/div/div[2]/form/div[3]/img").get_attribute("src")
+
+	def start(self):
+		self.browser = webdriver.PhantomJS()
+		data = {
+			"username": "test",
+			"password": "test123"
+		}
+		self.browser.get(url_login)
+		self.browser.find_element_by_id("id_username").send_keys(data["username"])
+		self.browser.find_element_by_id("id_password").send_keys(data["password"])
+		self.browser.find_element_by_id("id_submit").click()
+		time.sleep(1)
+		for i in range(31):
+			self.browser.get(url)
+			self.browser.find_element_by_id("id_username").send_keys("ss")
+			self.browser.find_element_by_id("id_password").send_keys(str(i))
+			while True:
+				self.check(i)
+				try:
+					img = Image.open(BytesIO(urlopen(self.captcha).read()))
+					print("captcha ({i}): ".format(i=i), image_to_string(img))
+				except:
+					self.browser.get(url)
+					self.browser.find_element_by_id("id_username").send_keys("ss")
+					self.browser.find_element_by_id("id_password").send_keys(str(i))
+					print("image_to_string error")
+
+				self.cont+=1
+				try:
+					self.browser.find_element_by_id("id_captcha_1").send_keys(image_to_string(img))
+					self.browser.find_element_by_id("id_submit").click()
+					time.sleep(1)
+					WebDriverWait(self.browser, 10).until(lambda browser: browser.find_element_by_tag_name("h3").is_displayed())
+					if "ss" in self.browser.find_element_by_tag_name("h3").text:
+						print(i, "success!")
+						self.browser.quit()
+						return 0
+					elif self.browser.find_element_by_tag_name("h3").text != "验证码输入错误":
+						print(i, self.browser.find_element_by_tag_name("h3").text)
+						self.wrong+=1
+						break
+					print(i, self.browser.find_element_by_tag_name("h3").text)
+				except:
+					print("a error")
 
 
-
-start()
-print("一共{cont}张图片下载成功， 正确率{ans}".format(cont=cont, ans=((cont-wrong)/cont)))
-# img = Image.open("captcha.png")
-# img = img.convert("L")
-# print(image_to_string(img))
+q = Fifth()
+q.start()
