@@ -50,13 +50,12 @@ class Fifth():
 				try:
 					img = Image.open(BytesIO(urlopen(self.captcha).read()))
 					print("captcha ({i}): ".format(i=i), image_to_string(img))
+					self.cont+=1
 				except:
 					self.browser.get(url)
 					self.browser.find_element_by_id("id_username").send_keys("ss")
 					self.browser.find_element_by_id("id_password").send_keys(str(i))
 					print("image_to_string error")
-
-				self.cont+=1
 				try:
 					self.browser.find_element_by_id("id_captcha_1").send_keys(image_to_string(img))
 					self.browser.find_element_by_id("id_submit").click()

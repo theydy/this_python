@@ -21,8 +21,10 @@ url='http://www.heibanke.com/lesson/crawler_ex01/'
 
 
 
-params = {'username' : 'ydy',
-		'password' : 0}
+params = {
+	'username' : 'ydy',
+	'password' : 0
+}
 
 
 for num in range(30):
