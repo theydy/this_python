@@ -3,22 +3,14 @@ import pymongo
 import requests
 import re
 import time
-from threading import Thread
+from threading import Thread, Lock
 
 
 client = pymongo.MongoClient("localhost", 27017)
 db = client.douban_db
 collection = db.book_collection
 
-
-class Book(object):
-    def __init__(self, title=None, title_e=None, author=None,
-                score=None, comments=None):
-        self.title = title
-        self.title_e = title_e
-        self.author = author
-        self.score = score
-        self.comments = comments
+lock = Lock()
 
 
 def d_book_spider(url):
@@ -37,13 +29,17 @@ def d_book_spider(url):
         score = score.text if score is not None else None
         reg = re.compile("\(\s+(\d+.+)\s+\)")
         comments = reg.match(comments.text).group(1) if comments is not None else None
-        collection.insert_one({
-            "title": title,
-            "title_e": title_e,
-            "author": author,
-            "score": score,
-            "comments": comments
-        })
+        lock.acquire()
+        try:
+            collection.insert_one({
+                "title": title,
+                "title_e": title_e,
+                "author": author,
+                "score": score,
+                "comments": comments
+            })
+        finally:
+            lock.release()
 
 
 if __name__ == "__main__":
